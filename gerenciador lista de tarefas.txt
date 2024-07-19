@@ -1,0 +1,82 @@
+import csv
+
+def mostrar_opcoes():
+    print("\nOpções disponíveis:")
+    print("1 - Listar tarefas")
+    print("2 - Adicionar nova tarefa")
+    print("3 - Remover tarefa")
+    print("4 - Salvar tarefas")
+    print("5 - Sair do programa")
+
+def listar_tarefas(tarefas):
+    print("\nLista de tarefas:")
+    if not tarefas:
+        print("Nenhuma tarefa encontrada.")
+    else:
+        for idx, tarefa in enumerate(tarefas, start=1):
+            print(f"{idx}. {tarefa}")
+
+def adicionar_tarefa(tarefas):
+    nova_tarefa = input("\nDigite a nova tarefa: ")
+    tarefas.append(nova_tarefa)
+    print(f"Tarefa '{nova_tarefa}' adicionada com sucesso.")
+
+def remover_tarefa(tarefas):
+    listar_tarefas(tarefas)
+    if not tarefas:
+        return
+    
+    try:
+        idx = int(input("\nDigite o número da tarefa a ser removida: "))
+        if 1 <= idx <= len(tarefas):
+            tarefa_removida = tarefas.pop(idx - 1)
+            print(f"Tarefa '{tarefa_removida}' removida com sucesso.")
+        else:
+            print("Número de tarefa inválido.")
+    except ValueError:
+        print("Número de tarefa inválido. Digite um número válido.")
+
+def salvar_tarefas_csv(tarefas, arquivo):
+    with open(arquivo, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Tarefa'])
+        for tarefa in tarefas:
+            writer.writerow([tarefa])
+    print(f"Tarefas salvas no arquivo '{arquivo}'.")
+
+def carregar_tarefas_csv(arquivo):
+    tarefas = []
+    try:
+        with open(arquivo, 'r', newline='') as file:
+            reader = csv.reader(file)
+            next(reader)  # Pula o cabeçalho
+            for linha in reader:
+                tarefas.append(linha[0])
+    except FileNotFoundError:
+        print(f"Arquivo '{arquivo}' não encontrado. Criando um novo arquivo.")
+    return tarefas
+
+def main():
+    arquivo_csv = 'tarefas.csv'
+    tarefas = carregar_tarefas_csv(arquivo_csv)
+    
+    while True:
+        mostrar_opcoes()
+        opcao = input("\nDigite o número da opção desejada: ")
+        
+        if opcao == '1':
+            listar_tarefas(tarefas)
+        elif opcao == '2':
+            adicionar_tarefa(tarefas)
+        elif opcao == '3':
+            remover_tarefa(tarefas)
+        elif opcao == '4':
+            salvar_tarefas_csv(tarefas, arquivo_csv)
+        elif opcao == '5':
+            print("Programa encerrado.")
+            break
+        else:
+            print("Opção inválida. Digite um número de 1 a 5.")
+
+if __name__ == "__main__":
+    main()
